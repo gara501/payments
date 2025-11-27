@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+/* FlyonUI plugin for Tailwind CSS v4 */
+@plugin "flyonui";
+@import "flyonui/variants.css";
+
+@source "flyonui/dist/index.js";
+
+/* Tailwind CSS v4 theme configuration */
+@theme {
+  --font-family-sans: 'Raleway', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+/* Apply Raleway font globally */
+html, body {
+  font-family: 'Raleway', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+/* Toast animations */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Fade in animation for loading states */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+/* Staggered fade in for grid items */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* Screen reader only utility class for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Chart container styles */
+.chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Recharts responsive container override */
+.recharts-responsive-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Custom chart tooltip styles */
+.recharts-tooltip-wrapper {
+  z-index: 1000;
+}
+
+/* Chart legend styles */
+.recharts-legend-wrapper {
+  font-family: 'Raleway', sans-serif;
+}
+
+/* Chart axis text styles */
+.recharts-cartesian-axis-tick-value {
+  font-family: 'Raleway', sans-serif;
+}
+
+/* Pie chart label styles */
+.recharts-pie-label-text {
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+}

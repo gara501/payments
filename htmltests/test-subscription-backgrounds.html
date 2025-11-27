@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Subscription Background Images</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .card { 
+            width: 300px; 
+            height: 200px; 
+            margin: 20px; 
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card-bg {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .card-content {
+            padding: 15px;
+            background: white;
+            height: 80px;
+        }
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .debug-info {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+        .status {
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Subscription Background Images Test</h1>
+    
+    <div class="card">
+        <div class="card-bg" style="background-image: url('/assets/subscriptions/netflix.svg')">
+            <div class="debug-info">netflix.svg</div>
+        </div>
+        <div class="card-content">
+            <div class="card-title">Netflix</div>
+            <div class="status">$15.99/month</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-bg" style="background-image: url('/assets/subscriptions/spotify.svg')">
+            <div class="debug-info">spotify.svg</div>
+        </div>
+        <div class="card-content">
+            <div class="card-title">Spotify Premium</div>
+            <div class="status">$9.99/month</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-bg" style="background-image: url('/assets/subscriptions/adobe.svg')">
+            <div class="debug-info">adobe.svg</div>
+        </div>
+        <div class="card-content">
+            <div class="card-title">Adobe Creative Cloud</div>
+            <div class="status">$52.99/month</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-bg" style="background-image: url('/assets/subscriptions/disney.png')">
+            <div class="debug-info">disney.png</div>
+        </div>
+        <div class="card-content">
+            <div class="card-title">Disney Plus</div>
+            <div class="status">$7.99/month</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-bg" style="background-image: url('/assets/subscriptions/prime.png')">
+            <div class="debug-info">prime.png</div>
+        </div>
+        <div class="card-content">
+            <div class="card-title">Amazon Prime</div>
+            <div class="status">$14.98/month</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-bg" style="background-image: url('/assets/subscriptions/youtube.png')">
+            <div class="debug-info">youtube.png</div>
+        </div>
+        <div class="card-content">
+            <div class="card-title">YouTube Premium</div>
+            <div class="status">$11.99/month</div>
+        </div>
+    </div>
+
+    <script>
+        // Test image loading
+        const images = [
+            '/assets/subscriptions/netflix.svg',
+            '/assets/subscriptions/spotify.svg', 
+            '/assets/subscriptions/adobe.svg',
+            '/assets/subscriptions/disney.png',
+            '/assets/subscriptions/prime.png',
+            '/assets/subscriptions/youtube.png'
+        ];
+
+        images.forEach(src => {
+            const img = new Image();
+            img.onload = () => console.log(`✅ Loaded: ${src}`);
+            img.onerror = () => console.log(`❌ Failed: ${src}`);
+            img.src = src;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breadcrumb Navigation Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-7xl mx-auto p-8">
+    <h1 class="text-3xl font-bold mb-8 text-gray-900">Breadcrumb Navigation Examples</h1>
+    
+    <div class="space-y-8">
+      <!-- Example 1: Home Page (No Breadcrumb) -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Home Page (No Breadcrumb)</h2>
+        <p class="text-gray-600 mb-4">On the home page, breadcrumbs are not displayed since you're already at the root.</p>
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-gray-500">
+          No breadcrumb displayed
+        </div>
+      </div>
+
+      <!-- Example 2: Metrics Page -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Metrics Page</h2>
+        <p class="text-gray-600 mb-4">When navigating to /metrics, the breadcrumb shows the path:</p>
+        <nav aria-label="Breadcrumb" class="bg-white border border-gray-200 rounded-lg">
+          <div class="px-4">
+            <ol class="flex items-center gap-2 py-3 text-sm">
+              <li class="flex items-center gap-2">
+                <a href="/" class="text-gray-600 hover:text-blue-600 transition-colors duration-150 font-medium">
+                  Dashboard
+                </a>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="font-semibold text-gray-900" aria-current="page">
+                  Metrics
+                </span>
+              </li>
+            </ol>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Example 3: Multi-level Path -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Multi-level Path Example</h2>
+        <p class="text-gray-600 mb-4">For deeper paths like /settings/profile, the breadcrumb shows all levels:</p>
+        <nav aria-label="Breadcrumb" class="bg-white border border-gray-200 rounded-lg">
+          <div class="px-4">
+            <ol class="flex items-center gap-2 py-3 text-sm">
+              <li class="flex items-center gap-2">
+                <a href="/" class="text-gray-600 hover:text-blue-600 transition-colors duration-150 font-medium">
+                  Dashboard
+                </a>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <a href="/settings" class="text-gray-600 hover:text-blue-600 transition-colors duration-150 font-medium">
+                  Settings
+                </a>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="font-semibold text-gray-900" aria-current="page">
+                  Profile
+                </span>
+              </li>
+            </ol>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Example 4: Hyphenated Path -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Hyphenated Path Example</h2>
+        <p class="text-gray-600 mb-4">Paths with hyphens like /user-settings are automatically formatted:</p>
+        <nav aria-label="Breadcrumb" class="bg-white border border-gray-200 rounded-lg">
+          <div class="px-4">
+            <ol class="flex items-center gap-2 py-3 text-sm">
+              <li class="flex items-center gap-2">
+                <a href="/" class="text-gray-600 hover:text-blue-600 transition-colors duration-150 font-medium">
+                  Dashboard
+                </a>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="font-semibold text-gray-900" aria-current="page">
+                  User Settings
+                </span>
+              </li>
+            </ol>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Features List -->
+      <div class="bg-blue-50 rounded-lg p-6 border border-blue-200">
+        <h2 class="text-xl font-semibold mb-4 text-blue-900">Breadcrumb Features</h2>
+        <ul class="space-y-2 text-blue-800">
+          <li class="flex items-start gap-2">
+            <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span><strong>Automatic Path Detection:</strong> Breadcrumbs are generated automatically based on the current URL</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span><strong>Smart Formatting:</strong> Hyphenated paths are converted to readable labels (e.g., "user-settings" → "User Settings")</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span><strong>Clickable Navigation:</strong> All breadcrumb items except the current page are clickable links</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span><strong>Accessibility:</strong> Proper ARIA labels and semantic HTML for screen readers</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span><strong>Visual Separators:</strong> Chevron icons separate breadcrumb items for clear hierarchy</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span><strong>Hidden on Home:</strong> Breadcrumbs don't display on the home page to avoid redundancy</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

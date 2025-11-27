@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalStorage Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .subscription { padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>LocalStorage Adapter Test</h1>
+    
+    <div id="status"></div>
+    
+    <div>
+        <button onclick="testLocalStorage()">Test LocalStorage</button>
+        <button onclick="addTestSubscription()">Add Test Subscription</button>
+        <button onclick="loadSubscriptions()">Load Subscriptions</button>
+        <button onclick="clearData()">Clear Data</button>
+    </div>
+    
+    <div id="subscriptions"></div>
+
+    <script type="module">
+        // Simple localStorage adapter test
+        class LocalStorageAdapter {
+            constructor() {
+                this.STORAGE_KEY = 'subscriptions';
+            }
+
+            getAll() {
+                try {
+                    const stored = localStorage.getItem(this.STORAGE_KEY);
+                    if (!stored) return [];
+                    
+                    const subscriptions = JSON.parse(stored);
+                    return subscriptions.sort((a, b) => 
+                        new Date(b.subscription_date).getTime() - new Date(a.subscription_date).getTime()
+                    );
+                } catch (error) {
+                    console.error('Error reading from localStorage:', error);
+                    return [];
+                }
+            }
+
+            insert(subscription) {
+                try {
+                    const subscriptions = this.getAll();
+                    const maxId = subscriptions.length > 0 
+                        ? Math.max(...subscriptions.map(s => s.id)) 
+                        : 0;
+                    const newId = maxId + 1;
+                    
+                    const newSubscription = { ...subscription, id: newId };
+                    subscriptions.push(newSubscription);
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(subscriptions));
+                    
+                    return newId;
+                } catch (error) {
+                    console.error('Error saving to localStorage:', error);
+                    throw new Error('Failed to save subscription to localStorage');
+                }
+            }
+
+            clear() {
+                try {
+                    localStorage.removeItem(this.STORAGE_KEY);
+                } catch (error) {
+                    console.error('Error clearing localStorage:', error);
+                }
+            }
+
+            checkConnection() {
+                try {
+                    const testKey = '__localStorage_test__';
+                    localStorage.setItem(testKey, 'test');
+                    localStorage.removeItem(testKey);
+                    return true;
+                } catch (error) {
+                    console.error('localStorage is not available:', error);
+                    return false;
+                }
+            }
+        }
+
+        const adapter = new LocalStorageAdapter();
+        
+        window.testLocalStorage = function() {
+            const statusDiv = document.getElementById('status');
+            
+            if (adapter.checkConnection()) {
+                statusDiv.innerHTML = '<div class="status success">✅ LocalStorage is working!</div>';
+            } else {
+                statusDiv.innerHTML = '<div class="status error">❌ LocalStorage is not available</div>';
+            }
+        };
+
+        window.addTestSubscription = function() {
+            const subscription = {
+                name: `Test Subscription ${Date.now()}`,
+                subscription_date: new Date().toISOString().split('T')[0],
+                value: Math.round(Math.random() * 50 + 5),
+                is_active: true,
+                background_image: 'https://via.placeholder.com/150'
+            };
+
+            try {
+                const id = adapter.insert(subscription);
+                document.getElementById('status').innerHTML = 
+                    `<div class="status success">✅ Added subscription with ID: ${id}</div>`;
+                loadSubscriptions();
+            } catch (error) {
+                document.getElementById('status').innerHTML = 
+                    `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        };
+
+        window.loadSubscriptions = function() {
+            const subscriptions = adapter.getAll();
+            const subscriptionsDiv = document.getElementById('subscriptions');
+            
+            if (subscriptions.length === 0) {
+                subscriptionsDiv.innerHTML = '<p>No subscriptions found.</p>';
+                return;
+            }
+
+            subscriptionsDiv.innerHTML = '<h3>Subscriptions:</h3>' + 
+                subscriptions.map(sub => `
+                    <div class="subscription">
+                        <strong>${sub.name}</strong><br>
+                        Date: ${sub.subscription_date}<br>
+                        Value: $${sub.value}<br>
+                        Active: ${sub.is_active ? 'Yes' : 'No'}<br>
+                        ID: ${sub.id}
+                    </div>
+                `).join('');
+        };
+
+        window.clearData = function() {
+            adapter.clear();
+            document.getElementById('status').innerHTML = 
+                '<div class="status success">✅ Data cleared</div>';
+            loadSubscriptions();
+        };
+
+        // Load subscriptions on page load
+        loadSubscriptions();
+        testLocalStorage();
+    </script>
+</body>
+</html>

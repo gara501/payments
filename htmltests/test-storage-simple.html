@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Storage Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Simple Storage Test</h1>
+    
+    <div>
+        <button onclick="testBasicStorage()">Test Basic Storage</button>
+        <button onclick="testSubscriptionStorage()">Test Subscription Storage</button>
+        <button onclick="viewStorage()">View Storage</button>
+        <button onclick="clearStorage()">Clear Storage</button>
+    </div>
+    
+    <div id="log"></div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `<div class="log">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            console.log(message);
+        }
+
+        function testBasicStorage() {
+            log('Testing basic localStorage...');
+            
+            try {
+                // Test basic functionality
+                localStorage.setItem('test', 'hello');
+                const value = localStorage.getItem('test');
+                localStorage.removeItem('test');
+                
+                if (value === 'hello') {
+                    log('✅ Basic localStorage test passed');
+                } else {
+                    log('❌ Basic localStorage test failed');
+                }
+            } catch (error) {
+                log(`❌ Basic localStorage error: ${error.message}`);
+            }
+        }
+
+        function testSubscriptionStorage() {
+            log('Testing subscription storage...');
+            
+            try {
+                const subscriptions = [
+                    {
+                        id: 1,
+                        name: 'Test Subscription',
+                        subscription_date: '2025-01-01',
+                        value: 9.99,
+                        is_active: true,
+                        background_image: ''
+                    }
+                ];
+                
+                // Store subscriptions
+                localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
+                log('✅ Stored test subscription');
+                
+                // Retrieve subscriptions
+                const stored = localStorage.getItem('subscriptions');
+                const parsed = JSON.parse(stored);
+                
+                if (parsed && parsed.length === 1 && parsed[0].name === 'Test Subscription') {
+                    log('✅ Subscription storage test passed');
+                } else {
+                    log('❌ Subscription storage test failed');
+                }
+            } catch (error) {
+                log(`❌ Subscription storage error: ${error.message}`);
+            }
+        }
+
+        function viewStorage() {
+            log('Viewing current storage...');
+            
+            try {
+                const subscriptions = localStorage.getItem('subscriptions');
+                if (subscriptions) {
+                    const parsed = JSON.parse(subscriptions);
+                    log(`Found ${parsed.length} subscriptions in storage:`);
+                    parsed.forEach((sub, index) => {
+                        log(`  ${index + 1}. ${sub.name} - $${sub.value}`);
+                    });
+                } else {
+                    log('No subscriptions found in storage');
+                }
+            } catch (error) {
+                log(`❌ Error viewing storage: ${error.message}`);
+            }
+        }
+
+        function clearStorage() {
+            log('Clearing storage...');
+            localStorage.removeItem('subscriptions');
+            log('✅ Storage cleared');
+        }
+
+        // Auto-run basic test
+        window.addEventListener('load', () => {
+            testBasicStorage();
+            viewStorage();
+        });
+    </script>
+</body>
+</html>

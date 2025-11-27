@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Migration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Database Migration System Test</h1>
+        <p>This page tests the automatic database migration functionality.</p>
+        
+        <div class="test-section info">
+            <h3>Test Status</h3>
+            <div id="status">Ready to test</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Actions</h3>
+            <button id="testMigration" onclick="testMigrationSystem()">Test Migration System</button>
+            <button id="testCrud" onclick="testCrudOperations()" disabled>Test CRUD Operations</button>
+            <button id="showDbInfo" onclick="showDatabaseInfo()" disabled>Show Database Info</button>
+            <button id="clearLogs" onclick="clearLogs()">Clear Logs</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>Database Information</h3>
+            <div id="dbInfo">Not loaded</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Logs</h3>
+            <div id="logs"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeDatabase, DatabaseAdapter } from './src/db/index.js';
+        
+        let adapter = null;
+        
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function setStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `test-section ${type}`;
+            statusDiv.textContent = message;
+        }
+        
+        function enableButtons() {
+            document.getElementById('testCrud').disabled = false;
+            document.getElementById('showDbInfo').disabled = false;
+        }
+        
+        window.testMigrationSystem = async function() {
+            try {
+                setStatus('Testing migration system...', 'info');
+                log('🧪 Starting database migration system test');
+                
+                // Initialize database (this will run migrations)
+                log('1. Initializing database with migration system...');
+                await initializeDatabase();
+                log('✓ Database initialization completed');
+                
+                // Create adapter
+                log('2. Creating database adapter...');
+                adapter = new DatabaseAdapter();
+                log('✓ Database adapter created');
+                
+                // Test connection
+                log('3. Testing database connection...');
+                const isConnected = adapter.checkConnection();
+                if (!isConnected) {
+                    throw new Error('Database connection test failed');
+                }
+                log('✓ Database connection successful');
+                
+                // Test schema validation
+                log('4. Validating database schema...');
+                const isSchemaValid = adapter.validateDatabaseSchema();
+                if (!isSchemaValid) {
+                    throw new Error('Schema validation failed');
+                }
+                log('✓ Database schema validation passed');
+                
+                // Get database info
+                log('5. Getting database information...');
+                const dbInfo = adapter.getDatabaseInfo();
+                log(`✓ Schema version: ${dbInfo.schemaVersion}`);
+                log(`✓ Schema valid: ${dbInfo.isValid}`);
+                log(`✓ Total subscriptions: ${dbInfo.stats.totalCount}`);
+                log(`✓ Active subscriptions: ${dbInfo.stats.activeCount}`);
+                log(`✓ Inactive subscriptions: ${dbInfo.stats.inactiveCount}`);
+                
+                // Show migration history
+                if (dbInfo.migrationHistory.length > 0) {
+                    log('✓ Migration history:');
+                    dbInfo.migrationHistory.forEach(migration => {
+                        log(`  - v${migration.version}: ${migration.name} (applied: ${migration.appliedAt})`);
+                    });
+                } else {
+                    log('✓ No migration history (fresh database)');
+                }
+                
+                setStatus('Migration system test completed successfully!', 'success');
+                log('🎉 Migration system test passed!');
+                enableButtons();
+                
+            } catch (error) {
+                setStatus(`Migration test failed: ${error.message}`, 'error');
+                log(`❌ Migration system test failed: ${error.message}`, 'error');
+                console.error('Migration test error:', error);
+            }
+        };
+        
+        window.testCrudOperations = async function() {
+            if (!adapter) {
+                log('❌ Database not initialized. Run migration test first.', 'error');
+                return;
+            }
+            
+            try {
+                log('🧪 Testing CRUD operations...');
+                
+                // Test insert
+                const testSubscription = {
+                    name: 'Test Migration Service',
+                    subscription_date: '2024-01-01',
+                    value: 9.99,
+                    is_active: true,
+                    background_image: undefined
+                };
+                
+                const insertedId = adapter.insert(testSubscription);
+                log(`✓ Insert test passed (ID: ${insertedId})`);
+                
+                // Test getById
+                const retrieved = adapter.getById(insertedId);
+                if (!retrieved || retrieved.name !== testSubscription.name) {
+                    throw new Error('GetById test failed');
+                }
+                log('✓ GetById test passed');
+                
+                // Test getAll
+                const allSubscriptions = adapter.getAll();
+                if (allSubscriptions.length === 0) {
+                    throw new Error('GetAll test failed - no subscriptions found');
+                }
+                log(`✓ GetAll test passed (${allSubscriptions.length} subscriptions)`);
+                
+                // Test delete
+                const deleteSuccess = adapter.delete(insertedId);
+                if (!deleteSuccess) {
+                    throw new Error('Delete test failed');
+                }
+                log('✓ Delete test passed');
+                
+                // Verify deletion
+                const deletedItem = adapter.getById(insertedId);
+                if (deletedItem !== null) {
+                    throw new Error('Delete verification failed');
+                }
+                log('✓ Delete verification passed');
+                
+                log('🎉 All CRUD operations test passed!');
+                
+            } catch (error) {
+                log(`❌ CRUD operations test failed: ${error.message}`, 'error');
+                console.error('CRUD test error:', error);
+            }
+        };
+        
+        window.showDatabaseInfo = function() {
+            if (!adapter) {
+                log('❌ Database not initialized. Run migration test first.', 'error');
+                return;
+            }
+            
+            try {
+                const dbInfo = adapter.getDatabaseInfo();
+                const infoDiv = document.getElementById('dbInfo');
+                
+                infoDiv.innerHTML = `
+                    <h4>Schema Information</h4>
+                    <p><strong>Version:</strong> ${dbInfo.schemaVersion}</p>
+                    <p><strong>Valid:</strong> ${dbInfo.isValid ? '✓ Yes' : '❌ No'}</p>
+                    
+                    <h4>Statistics</h4>
+                    <p><strong>Total Subscriptions:</strong> ${dbInfo.stats.totalCount}</p>
+                    <p><strong>Active:</strong> ${dbInfo.stats.activeCount}</p>
+                    <p><strong>Inactive:</strong> ${dbInfo.stats.inactiveCount}</p>
+                    
+                    <h4>Migration History</h4>
+                    ${dbInfo.migrationHistory.length > 0 ? 
+                        '<ul>' + dbInfo.migrationHistory.map(m => 
+                            `<li>v${m.version}: ${m.name} (${m.appliedAt})</li>`
+                        ).join('') + '</ul>' : 
+                        '<p>No migrations applied</p>'
+                    }
+                `;
+                
+                log('Database information updated');
+            } catch (error) {
+                log(`❌ Failed to show database info: ${error.message}`, 'error');
+            }
+        };
+        
+        window.clearLogs = function() {
+            document.getElementById('logs').innerHTML = '';
+            log('Logs cleared');
+        };
+        
+        // Auto-run test on page load
+        log('Page loaded. Ready to test migration system.');
+    </script>
+</body>
+</html>

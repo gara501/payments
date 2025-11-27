@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Images Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .subscription-card {
+            width: 300px;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            height: 160px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        .card-content {
+            padding: 16px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .card-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .log { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .test-image {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ddd;
+            margin: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Subscription Background Images Test</h1>
+    
+    <div>
+        <button onclick="addTestData()">Add Test Data</button>
+        <button onclick="loadSubscriptions()">Load Subscriptions</button>
+        <button onclick="clearData()">Clear Data</button>
+        <button onclick="testImages()">Test Images</button>
+    </div>
+    
+    <div id="log"></div>
+    <div id="subscriptions"></div>
+    <div id="image-tests"></div>
+
+    <script>
+        const testImageUrl = 'https://thumbs.dreamstime.com/b/ancient-esoteric-alchemical-image-s-michelspacher-s-cabal-ancient-esoteric-alchemical-image-michelspacher-s-cabal-201453355.jpg';
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `<div class="log">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            console.log(message);
+        }
+
+        function addTestData() {
+            log('Adding test data...');
+            
+            const testSubscriptions = [
+                {
+                    id: 1,
+                    name: 'Alchemical Subscription',
+                    subscription_date: '2025-01-01',
+                    value: 15.99,
+                    is_active: true,
+                    background_image: testImageUrl
+                },
+                {
+                    id: 2,
+                    name: 'Music Streaming',
+                    subscription_date: '2025-01-15',
+                    value: 9.99,
+                    is_active: true,
+                    background_image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop'
+                },
+                {
+                    id: 3,
+                    name: 'No Image Subscription',
+                    subscription_date: '2025-02-01',
+                    value: 12.99,
+                    is_active: true,
+                    background_image: ''
+                }
+            ];
+
+            localStorage.setItem('subscriptions', JSON.stringify(testSubscriptions));
+            log(`✅ Added ${testSubscriptions.length} test subscriptions`);
+        }
+
+        function loadSubscriptions() {
+            log('Loading subscriptions...');
+            
+            try {
+                const stored = localStorage.getItem('subscriptions');
+                if (!stored) {
+                    log('No subscriptions found');
+                    return;
+                }
+
+                const subscriptions = JSON.parse(stored);
+                const subscriptionsDiv = document.getElementById('subscriptions');
+                
+                subscriptionsDiv.innerHTML = '<h3>Subscriptions:</h3>';
+                
+                subscriptions.forEach(sub => {
+                    const cardHtml = `
+                        <div class="subscription-card">
+                            <div class="card-header" style="background-image: ${sub.background_image ? `url('${sub.background_image}')` : 'none'};">
+                            </div>
+                            <div class="card-content">
+                                <div class="card-title">${sub.name}</div>
+                                <div class="card-price">$${sub.value}/month</div>
+                                <div style="font-size: 12px; color: #666; margin-top: 8px;">
+                                    Image: ${sub.background_image ? 'Yes' : 'No'}
+                                </div>
+                                ${sub.background_image ? `<div style="font-size: 10px; color: #999; word-break: break-all;">${sub.background_image}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    subscriptionsDiv.innerHTML += cardHtml;
+                });
+                
+                log(`✅ Loaded ${subscriptions.length} subscriptions`);
+            } catch (error) {
+                log(`❌ Error loading subscriptions: ${error.message}`);
+            }
+        }
+
+        function clearData() {
+            localStorage.removeItem('subscriptions');
+            document.getElementById('subscriptions').innerHTML = '';
+            log('✅ Data cleared');
+        }
+
+        function testImages() {
+            log('Testing image loading...');
+            
+            const testUrls = [
+                testImageUrl,
+                'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=400&h=300&fit=crop'
+            ];
+            
+            const imageTestsDiv = document.getElementById('image-tests');
+            imageTestsDiv.innerHTML = '<h3>Image Loading Tests:</h3>';
+            
+            testUrls.forEach((url, index) => {
+                // Test with img tag
+                const img = document.createElement('img');
+                img.className = 'test-image';
+                img.style.objectFit = 'cover';
+                img.onload = () => log(`✅ Image ${index + 1} loaded via IMG tag`);
+                img.onerror = () => log(`❌ Image ${index + 1} failed via IMG tag`);
+                img.src = url;
+                
+                // Test with background image
+                const bgDiv = document.createElement('div');
+                bgDiv.className = 'test-image';
+                bgDiv.style.backgroundImage = `url('${url}')`;
+                bgDiv.style.backgroundSize = 'cover';
+                bgDiv.style.backgroundPosition = 'center';
+                bgDiv.style.backgroundColor = '#f0f0f0';
+                
+                const container = document.createElement('div');
+                container.innerHTML = `<p>Image ${index + 1}:</p>`;
+                container.appendChild(img);
+                container.appendChild(bgDiv);
+                
+                imageTestsDiv.appendChild(container);
+            });
+        }
+
+        // Auto-load on page load
+        window.addEventListener('load', () => {
+            loadSubscriptions();
+        });
+    </script>
+</body>
+</html>

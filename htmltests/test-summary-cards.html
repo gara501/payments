@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summary Cards Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen p-8">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold text-gray-900 mb-8">Summary Cards Test</h1>
+    
+    <!-- Summary Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Total Subscriptions Card -->
+      <div class="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+            Total Subscriptions
+          </h3>
+          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg 
+              class="w-5 h-5 text-blue-600" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                stroke-width="2" 
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+              />
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-gray-900">
+          12
+        </p>
+        <p class="text-sm text-gray-500 mt-1">
+          All subscriptions
+        </p>
+      </div>
+
+      <!-- Active Subscriptions Card -->
+      <div class="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+            Active
+          </h3>
+          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg 
+              class="w-5 h-5 text-green-600" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                stroke-width="2" 
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+              />
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-gray-900">
+          10
+        </p>
+        <p class="text-sm text-gray-500 mt-1">
+          Currently active
+        </p>
+      </div>
+
+      <!-- Inactive Subscriptions Card -->
+      <div class="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+            Inactive
+          </h3>
+          <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+            <svg 
+              class="w-5 h-5 text-gray-600" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                stroke-width="2" 
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" 
+              />
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-gray-900">
+          2
+        </p>
+        <p class="text-sm text-gray-500 mt-1">
+          Not currently active
+        </p>
+      </div>
+
+      <!-- Average Cost Card -->
+      <div class="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+            Average Cost
+          </h3>
+          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg 
+              class="w-5 h-5 text-purple-600" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                stroke-width="2" 
+                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" 
+              />
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-gray-900">
+          $15.99
+        </p>
+        <p class="text-sm text-gray-500 mt-1">
+          Per subscription
+        </p>
+      </div>
+    </div>
+
+    <!-- Test Different States -->
+    <div class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Responsive Test</h2>
+      <p class="text-gray-600 mb-4">Resize your browser window to see how the cards adapt:</p>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li>Mobile (< 640px): 1 column</li>
+        <li>Tablet (640px - 1024px): 2 columns</li>
+        <li>Desktop (> 1024px): 4 columns</li>
+      </ul>
+    </div>
+
+    <!-- Hover State Test -->
+    <div class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Interaction Test</h2>
+      <p class="text-gray-600 mb-4">Hover over the cards to see the shadow effect transition.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Seed Data with Images</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .subscription { 
+            border: 1px solid #ccc; 
+            margin: 10px 0; 
+            padding: 15px; 
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .has-image { background-color: #e8f5e8; }
+        .image-path { 
+            font-family: monospace; 
+            color: #666; 
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Seed Data with Background Images Test</h1>
+    <div id="subscriptions"></div>
+
+    <script type="module">
+        import { sampleSubscriptions } from './src/db/seedData.ts';
+        
+        const container = document.getElementById('subscriptions');
+        
+        sampleSubscriptions.forEach(sub => {
+            const div = document.createElement('div');
+            div.className = `subscription ${sub.background_image ? 'has-image' : ''}`;
+            
+            div.innerHTML = `
+                <h3>${sub.name}</h3>
+                <p><strong>Value:</strong> $${sub.value}</p>
+                <p><strong>Date:</strong> ${sub.subscription_date}</p>
+                <p><strong>Active:</strong> ${sub.is_active ? 'Yes' : 'No'}</p>
+                ${sub.background_image ? 
+                    `<div class="image-path"><strong>Background Image:</strong> ${sub.background_image}</div>` : 
+                    '<div class="image-path">No background image</div>'
+                }
+            `;
+            
+            container.appendChild(div);
+        });
+        
+        // Summary
+        const withImages = sampleSubscriptions.filter(s => s.background_image).length;
+        const total = sampleSubscriptions.length;
+        
+        const summary = document.createElement('div');
+        summary.innerHTML = `
+            <h2>Summary</h2>
+            <p><strong>Total subscriptions:</strong> ${total}</p>
+            <p><strong>With background images:</strong> ${withImages}</p>
+            <p><strong>Without background images:</strong> ${total - withImages}</p>
+        `;
+        container.appendChild(summary);
+    </script>
+</body>
+</html>

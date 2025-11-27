@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Subscription Flow Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; font-size: 12px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 300px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .subscription-preview { 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin: 15px 0; 
+            background: #f9f9f9; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Add Subscription Flow Test</h1>
+    
+    <div>
+        <button onclick="clearStorage()">Clear Storage</button>
+        <button onclick="viewStorage()">View Storage</button>
+        <button onclick="testAddFlow()">Test Add Flow</button>
+    </div>
+    
+    <div id="log"></div>
+    
+    <div style="border: 1px solid #ccc; padding: 20px; margin: 20px 0; border-radius: 8px;">
+        <h3>Manual Add Subscription Test</h3>
+        <form id="testForm">
+            <div class="form-group">
+                <label for="name">Subscription Name:</label>
+                <input type="text" id="name" value="Test Subscription" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subscription_date">Start Date:</label>
+                <input type="date" id="subscription_date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="value">Monthly Cost:</label>
+                <input type="number" id="value" step="0.01" min="0" value="9.99" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="is_active">Status:</label>
+                <select id="is_active">
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="background_image">Background Image URL:</label>
+                <input type="url" id="background_image" value="https://thumbs.dreamstime.com/b/ancient-esoteric-alchemical-image-s-michelspacher-s-cabal-ancient-esoteric-alchemical-image-michelspacher-s-cabal-201453355.jpg">
+            </div>
+            
+            <button type="submit">Add Subscription</button>
+        </form>
+    </div>
+    
+    <div id="preview"></div>
+    <div id="storage-view"></div>
+
+    <script>
+        const STORAGE_KEY = 'subscriptions';
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div class="log ${type}">${timestamp}: ${message}</div>`;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Set today's date as default
+        document.getElementById('subscription_date').value = new Date().toISOString().split('T')[0];
+
+        // Simulate the localStorage adapter
+        class LocalStorageAdapter {
+            getAll() {
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (!stored) return [];
+                    
+                    const subscriptions = JSON.parse(stored);
+                    return subscriptions.sort((a, b) => 
+                        new Date(b.subscription_date).getTime() - new Date(a.subscription_date).getTime()
+                    );
+                } catch (error) {
+                    log(`Error reading from localStorage: ${error.message}`, 'error');
+                    return [];
+                }
+            }
+
+            insert(subscription) {
+                try {
+                    log(`Attempting to insert subscription: ${subscription.name}`, 'info');
+                    
+                    const subscriptions = this.getAll();
+                    const maxId = subscriptions.length > 0 
+                        ? Math.max(...subscriptions.map(s => s.id)) 
+                        : 0;
+                    const newId = maxId + 1;
+                    
+                    const newSubscription = { ...subscription, id: newId };
+                    subscriptions.push(newSubscription);
+                    
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(subscriptions));
+                    
+                    log(`Successfully inserted subscription with ID: ${newId}`, 'success');
+                    log(`Subscription data: ${JSON.stringify(newSubscription, null, 2)}`, 'info');
+                    
+                    return newId;
+                } catch (error) {
+                    log(`Error saving to localStorage: ${error.message}`, 'error');
+                    throw new Error('Failed to save subscription to localStorage');
+                }
+            }
+
+            getTableStats() {
+                const subscriptions = this.getAll();
+                const totalCount = subscriptions.length;
+                const activeCount = subscriptions.filter(s => s.is_active).length;
+                const inactiveCount = totalCount - activeCount;
+                
+                return { totalCount, activeCount, inactiveCount };
+            }
+        }
+
+        const adapter = new LocalStorageAdapter();
+
+        function clearStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+            log('Storage cleared', 'success');
+            viewStorage();
+        }
+
+        function viewStorage() {
+            const subscriptions = adapter.getAll();
+            const stats = adapter.getTableStats();
+            
+            const storageDiv = document.getElementById('storage-view');
+            
+            if (subscriptions.length === 0) {
+                storageDiv.innerHTML = '<h3>Storage is empty</h3>';
+                log('No subscriptions found in storage', 'info');
+                return;
+            }
+
+            let html = `<h3>Storage Contents (${stats.totalCount} total, ${stats.activeCount} active)</h3>`;
+            
+            subscriptions.forEach((sub, index) => {
+                html += `
+                    <div class="subscription-preview">
+                        <strong>${sub.name}</strong> (ID: ${sub.id})<br>
+                        Date: ${sub.subscription_date}<br>
+                        Value: $${sub.value}<br>
+                        Active: ${sub.is_active ? 'Yes' : 'No'}<br>
+                        Background Image: ${sub.background_image ? 'Yes' : 'No'}
+                        ${sub.background_image ? `<br><small style="word-break: break-all;">${sub.background_image}</small>` : ''}
+                    </div>
+                `;
+            });
+            
+            storageDiv.innerHTML = html;
+            log(`Found ${subscriptions.length} subscriptions in storage`, 'success');
+        }
+
+        function testAddFlow() {
+            log('Starting add subscription flow test...', 'info');
+            
+            const testSubscription = {
+                name: 'Flow Test Subscription',
+                subscription_date: '2025-01-01',
+                value: 19.99,
+                is_active: true,
+                background_image: 'https://thumbs.dreamstime.com/b/ancient-esoteric-alchemical-image-s-michelspacher-s-cabal-ancient-esoteric-alchemical-image-michelspacher-s-cabal-201453355.jpg'
+            };
+
+            try {
+                // Step 1: Validate data
+                log('Step 1: Validating subscription data...', 'info');
+                if (!testSubscription.name || !testSubscription.subscription_date || testSubscription.value <= 0) {
+                    throw new Error('Invalid subscription data');
+                }
+                log('✅ Data validation passed', 'success');
+
+                // Step 2: Insert into storage
+                log('Step 2: Inserting into storage...', 'info');
+                const id = adapter.insert(testSubscription);
+                log(`✅ Insert successful, returned ID: ${id}`, 'success');
+
+                // Step 3: Verify storage
+                log('Step 3: Verifying storage...', 'info');
+                const stored = adapter.getAll();
+                const found = stored.find(s => s.id === id);
+                
+                if (found) {
+                    log('✅ Subscription found in storage after insert', 'success');
+                    log(`Stored data: ${JSON.stringify(found, null, 2)}`, 'info');
+                } else {
+                    throw new Error('Subscription not found in storage after insert');
+                }
+
+                // Step 4: Update view
+                viewStorage();
+                log('✅ Add subscription flow test completed successfully', 'success');
+
+            } catch (error) {
+                log(`❌ Add subscription flow test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            log('Form submitted, processing...', 'info');
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                subscription_date: document.getElementById('subscription_date').value,
+                value: parseFloat(document.getElementById('value').value),
+                is_active: document.getElementById('is_active').value === 'true',
+                background_image: document.getElementById('background_image').value || ''
+            };
+
+            log(`Form data: ${JSON.stringify(formData, null, 2)}`, 'info');
+
+            try {
+                const id = adapter.insert(formData);
+                log(`✅ Form submission successful, ID: ${id}`, 'success');
+                
+                // Reset form
+                document.getElementById('testForm').reset();
+                document.getElementById('subscription_date').value = new Date().toISOString().split('T')[0];
+                
+                viewStorage();
+            } catch (error) {
+                log(`❌ Form submission failed: ${error.message}`, 'error');
+            }
+        });
+
+        // Auto-load storage view on page load
+        window.addEventListener('load', () => {
+            log('Page loaded, checking storage...', 'info');
+            viewStorage();
+        });
+    </script>
+</body>
+</html>

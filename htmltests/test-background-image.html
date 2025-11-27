@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Image Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-card {
+            width: 300px;
+            height: 200px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 20px 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        .gradient-fallback {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+        }
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 0 0 8px 8px;
+        }
+        .log { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Background Image Test</h1>
+    
+    <div>
+        <button onclick="testImageLoad()">Test Image Load</button>
+        <button onclick="testWithFallback()">Test with Fallback</button>
+        <button onclick="testCORS()">Test CORS</button>
+    </div>
+    
+    <div id="log"></div>
+    
+    <div class="test-card gradient-fallback" id="test-card-1">
+        <div class="overlay">Test Card 1: Gradient Only</div>
+    </div>
+    
+    <div class="test-card gradient-fallback" id="test-card-2">
+        <div class="overlay">Test Card 2: With Background Image</div>
+    </div>
+    
+    <div class="test-card" id="test-card-3">
+        <div class="overlay">Test Card 3: Image Only</div>
+    </div>
+
+    <script>
+        const testImageUrl = 'https://thumbs.dreamstime.com/b/ancient-esoteric-alchemical-image-s-michelspacher-s-cabal-ancient-esoteric-alchemical-image-michelspacher-s-cabal-201453355.jpg';
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `<div class="log">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            console.log(message);
+        }
+
+        function testImageLoad() {
+            log('Testing image load...');
+            
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            img.onload = function() {
+                log(`✅ Image loaded successfully: ${img.width}x${img.height}`);
+                
+                // Apply to test card 2
+                const card2 = document.getElementById('test-card-2');
+                card2.style.backgroundImage = `url(${testImageUrl})`;
+                log('✅ Applied image to test card 2');
+            };
+            
+            img.onerror = function() {
+                log('❌ Image failed to load');
+            };
+            
+            img.src = testImageUrl;
+        }
+
+        function testWithFallback() {
+            log('Testing with fallback...');
+            
+            const card2 = document.getElementById('test-card-2');
+            // This mimics how the React component works
+            card2.style.backgroundImage = `url(${testImageUrl})`;
+            card2.style.backgroundSize = 'cover';
+            card2.style.backgroundPosition = 'center';
+            
+            log('✅ Applied image with fallback to test card 2');
+        }
+
+        function testCORS() {
+            log('Testing CORS...');
+            
+            fetch(testImageUrl, { mode: 'no-cors' })
+                .then(() => {
+                    log('✅ CORS test passed (or no-cors mode worked)');
+                    
+                    // Apply to test card 3
+                    const card3 = document.getElementById('test-card-3');
+                    card3.style.backgroundImage = `url(${testImageUrl})`;
+                    card3.style.backgroundSize = 'cover';
+                    card3.style.backgroundPosition = 'center';
+                })
+                .catch(error => {
+                    log(`❌ CORS test failed: ${error.message}`);
+                });
+        }
+
+        // Auto-run tests
+        window.addEventListener('load', () => {
+            log('Page loaded, starting tests...');
+            setTimeout(() => {
+                testImageLoad();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

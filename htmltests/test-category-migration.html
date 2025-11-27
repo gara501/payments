@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Migration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Category Migration Test</h1>
+        <p>This page tests the database migration for adding the category field to subscriptions.</p>
+        
+        <div class="test-section info">
+            <h3>Test Status</h3>
+            <div id="status">Initializing...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>Database Info</h3>
+            <div id="dbInfo">Loading...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>Migration History</h3>
+            <div id="migrationHistory">Loading...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>Sample Subscriptions with Categories</h3>
+            <div id="subscriptions">Loading...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>Actions</h3>
+            <button onclick="testCategoryInsertion()">Test Category Insertion</button>
+            <button onclick="refreshData()">Refresh Data</button>
+            <button onclick="clearDatabase()">Clear Database</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Results</h3>
+            <div id="testResults"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { DatabaseAdapter } from './src/db/adapter.js';
+        import { seedDatabase } from './src/db/seedData.js';
+
+        let adapter;
+        
+        async function initializeDatabase() {
+            try {
+                updateStatus('Initializing database...', 'info');
+                
+                // Initialize adapter
+                adapter = new DatabaseAdapter();
+                
+                // Check if database is working
+                const isConnected = adapter.checkConnection();
+                if (!isConnected) {
+                    throw new Error('Database connection failed');
+                }
+                
+                // Verify table structure
+                const isValid = adapter.verifyTableStructure();
+                if (!isValid) {
+                    throw new Error('Table structure validation failed');
+                }
+                
+                updateStatus('Database initialized successfully!', 'success');
+                await loadDatabaseInfo();
+                await loadSubscriptions();
+                
+            } catch (error) {
+                console.error('Database initialization failed:', error);
+                updateStatus(`Database initialization failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadDatabaseInfo() {
+            try {
+                const dbInfo = adapter.getDatabaseInfo();
+                
+                const infoHtml = `
+                    <strong>Schema Version:</strong> ${dbInfo.schemaVersion}<br>
+                    <strong>Schema Valid:</strong> ${dbInfo.isValid ? '✅ Yes' : '❌ No'}<br>
+                    <strong>Total Subscriptions:</strong> ${dbInfo.stats.totalCount}<br>
+                    <strong>Active Subscriptions:</strong> ${dbInfo.stats.activeCount}<br>
+                    <strong>Inactive Subscriptions:</strong> ${dbInfo.stats.inactiveCount}
+                `;
+                
+                document.getElementById('dbInfo').innerHTML = infoHtml;
+                
+                // Display migration history
+                const historyHtml = dbInfo.migrationHistory.length > 0 
+                    ? dbInfo.migrationHistory.map(m => 
+                        `<div>v${m.version}: ${m.name} (${m.appliedAt})</div>`
+                      ).join('')
+                    : '<div>No migrations found</div>';
+                
+                document.getElementById('migrationHistory').innerHTML = historyHtml;
+                
+            } catch (error) {
+                console.error('Failed to load database info:', error);
+                document.getElementById('dbInfo').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        async function loadSubscriptions() {
+            try {
+                const subscriptions = adapter.getAll();
+                
+                if (subscriptions.length === 0) {
+                    document.getElementById('subscriptions').innerHTML = '<div>No subscriptions found. <button onclick="seedDatabase()">Seed Database</button></div>';
+                    return;
+                }
+                
+                const subscriptionsHtml = subscriptions.slice(0, 5).map(sub => `
+                    <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <strong>${sub.name}</strong><br>
+                        <span style="color: #666;">Category: ${sub.category || 'No category'}</span><br>
+                        <span style="color: #666;">Value: $${sub.value}</span><br>
+                        <span style="color: #666;">Active: ${sub.is_active ? 'Yes' : 'No'}</span>
+                    </div>
+                `).join('');
+                
+                document.getElementById('subscriptions').innerHTML = subscriptionsHtml + 
+                    (subscriptions.length > 5 ? `<div>... and ${subscriptions.length - 5} more</div>` : '');
+                
+            } catch (error) {
+                console.error('Failed to load subscriptions:', error);
+                document.getElementById('subscriptions').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        window.testCategoryInsertion = async function() {
+            try {
+                updateTestResults('Testing category insertion...', 'info');
+                
+                // Test inserting a subscription with a category
+                const testSubscription = {
+                    name: 'Test Category Subscription',
+                    subscription_date: '2025-01-01',
+                    value: 9.99,
+                    is_active: true,
+                    category: 'Health'
+                };
+                
+                const id = adapter.insert(testSubscription);
+                updateTestResults(`✅ Successfully inserted subscription with ID: ${id}`, 'success');
+                
+                // Verify the subscription was inserted with the correct category
+                const retrieved = adapter.getById(id);
+                if (retrieved && retrieved.category === 'Health') {
+                    updateTestResults(`✅ Category field verified: ${retrieved.category}`, 'success');
+                } else {
+                    updateTestResults(`❌ Category field mismatch. Expected: Health, Got: ${retrieved?.category}`, 'error');
+                }
+                
+                // Clean up - delete the test subscription
+                adapter.delete(id);
+                updateTestResults(`✅ Test subscription cleaned up`, 'success');
+                
+                await loadDatabaseInfo();
+                await loadSubscriptions();
+                
+            } catch (error) {
+                console.error('Category insertion test failed:', error);
+                updateTestResults(`❌ Category insertion test failed: ${error.message}`, 'error');
+            }
+        };
+
+        window.refreshData = async function() {
+            await loadDatabaseInfo();
+            await loadSubscriptions();
+        };
+
+        window.clearDatabase = async function() {
+            if (confirm('Are you sure you want to clear all subscription data?')) {
+                try {
+                    const subscriptions = adapter.getAll();
+                    for (const sub of subscriptions) {
+                        adapter.delete(sub.id);
+                    }
+                    updateStatus('Database cleared successfully', 'success');
+                    await loadDatabaseInfo();
+                    await loadSubscriptions();
+                } catch (error) {
+                    updateStatus(`Failed to clear database: ${error.message}`, 'error');
+                }
+            }
+        };
+
+        window.seedDatabase = async function() {
+            try {
+                updateStatus('Seeding database...', 'info');
+                seedDatabase(adapter);
+                updateStatus('Database seeded successfully!', 'success');
+                await loadDatabaseInfo();
+                await loadSubscriptions();
+            } catch (error) {
+                updateStatus(`Failed to seed database: ${error.message}`, 'error');
+            }
+        };
+
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = message;
+            statusDiv.className = `test-section ${type}`;
+        }
+
+        function updateTestResults(message, type) {
+            const resultsDiv = document.getElementById('testResults');
+            const timestamp = new Date().toLocaleTimeString();
+            resultsDiv.innerHTML += `<div class="${type}" style="margin: 5px 0; padding: 5px;">[${timestamp}] ${message}</div>`;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeDatabase);
+    </script>
+</body>
+</html>
