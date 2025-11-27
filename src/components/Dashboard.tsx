@@ -16,7 +16,6 @@ export const Dashboard: React.FC = () => {
     update: updateSubscription,
     delete: deleteSubscription,
     loadMore,
-    addTestData,
   } = useSubscriptions();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -222,14 +221,6 @@ export const Dashboard: React.FC = () => {
                     {storageInfo.stats.totalCount} {storageInfo.stats.totalCount === 1 ? 'subscription' : 'subscriptions'}
                   </span>
                 </div>
-                {/* Temporary test button - remove in production */}
-                <button
-                  onClick={addTestData}
-                  className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 font-medium transition-colors duration-150"
-                  title="Add test data for development"
-                >
-                  Add Test Data
-                </button>
               </div>
             </div>
 

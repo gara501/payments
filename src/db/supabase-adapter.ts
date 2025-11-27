@@ -1,5 +1,9 @@
 import { getSupabaseClient } from './supabase-client';
 import type { Subscription } from '../types/subscription';
+import type { Database } from './database.types';
+
+type SubscriptionRow = Database['public']['Tables']['subscriptions']['Row'];
+type SubscriptionInsert = Database['public']['Tables']['subscriptions']['Insert'];
 
 /**
  * Supabase Database Adapter
@@ -26,7 +30,7 @@ export class SupabaseAdapter {
 
     // Transform Supabase data to match our Subscription type
     // Note: Keeping id as number for now to maintain compatibility
-    return (data || []).map(row => ({
+    return (data || []).map((row: SubscriptionRow) => ({
       id: this.uuidToNumber(row.id),
       name: row.name,
       subscription_date: row.subscription_date,
@@ -43,16 +47,18 @@ export class SupabaseAdapter {
   async insert(subscription: Omit<Subscription, 'id'>): Promise<number> {
     const supabase = getSupabaseClient();
     
+    const insertData: SubscriptionInsert = {
+      name: subscription.name,
+      subscription_date: subscription.subscription_date,
+      value: subscription.value,
+      is_active: subscription.is_active,
+      background_image: subscription.background_image || null,
+      category: subscription.category || 'General',
+    };
+    
     const { data, error } = await supabase
       .from('subscriptions')
-      .insert({
-        name: subscription.name,
-        subscription_date: subscription.subscription_date,
-        value: subscription.value,
-        is_active: subscription.is_active,
-        background_image: subscription.background_image || null,
-        category: subscription.category || 'General',
-      })
+      .insert(insertData as any)
       .select()
       .single();
 
@@ -66,8 +72,9 @@ export class SupabaseAdapter {
     }
 
     // Store UUID mapping for later retrieval
-    const numericId = this.uuidToNumber(data.id);
-    this.storeUuidMapping(numericId, data.id);
+    const typedData = data as SubscriptionRow;
+    const numericId = this.uuidToNumber(typedData.id);
+    this.storeUuidMapping(numericId, typedData.id);
     
     return numericId;
   }
@@ -87,6 +94,7 @@ export class SupabaseAdapter {
 
     const { error } = await supabase
       .from('subscriptions')
+      // @ts-expect-error - Supabase type inference issue with generic Database type
       .update({
         name: subscription.name,
         subscription_date: subscription.subscription_date,
@@ -166,14 +174,15 @@ export class SupabaseAdapter {
       return null;
     }
 
+    const typedData = data as SubscriptionRow;
     return {
-      id: this.uuidToNumber(data.id),
-      name: data.name,
-      subscription_date: data.subscription_date,
-      value: data.value,
-      is_active: data.is_active,
-      background_image: data.background_image || undefined,
-      category: data.category || 'General',
+      id: this.uuidToNumber(typedData.id),
+      name: typedData.name,
+      subscription_date: typedData.subscription_date,
+      value: typedData.value,
+      is_active: typedData.is_active,
+      background_image: typedData.background_image || undefined,
+      category: typedData.category || 'General',
     };
   }
 
@@ -281,7 +290,7 @@ export class SupabaseAdapter {
     }
 
     // Find the UUID that matches this numeric ID and cache all mappings
-    for (const row of data) {
+    for (const row of data as Array<{ id: string }>) {
       const numericId = this.uuidToNumber(row.id);
       this.storeUuidMapping(numericId, row.id);
       
