@@ -8,7 +8,7 @@
 declare global {
   interface ImportMetaEnv {
     readonly VITE_SUPABASE_URL: string;
-    readonly VITE_SUPABASE_API_KEY: string;
+    readonly VITE_SUPABASE_ANON_KEY: string;
     readonly VITE_JIRA_API_TOKEN: string;
     // Add more environment variables here as needed
   }
@@ -22,7 +22,7 @@ declare global {
 export const env = {
   supabase: {
     url: import.meta.env.VITE_SUPABASE_URL || '',
-    apiKey: import.meta.env.VITE_SUPABASE_API_KEY || '',
+    apiKey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
   },
   jira: {
     apiToken: import.meta.env.VITE_JIRA_API_TOKEN || '',
@@ -33,7 +33,7 @@ export const env = {
 export function validateEnv(): void {
   const requiredVars = [
     'VITE_SUPABASE_URL',
-    'VITE_SUPABASE_API_KEY',
+    'VITE_SUPABASE_ANON_KEY',
   ];
 
   const missingVars = requiredVars.filter(

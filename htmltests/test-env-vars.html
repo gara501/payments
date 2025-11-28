@@ -40,7 +40,7 @@
         </div>
 
         <div class="border-l-4 border-green-500 pl-4 py-2">
-          <h3 class="font-semibold text-gray-700">VITE_SUPABASE_API_KEY</h3>
+          <h3 class="font-semibold text-gray-700">VITE_SUPABASE_ANON_KEY</h3>
           <p class="text-gray-600 font-mono text-sm" id="supabase-key">Loading...</p>
         </div>
       </div>
@@ -65,7 +65,7 @@
   <script type="module">
     // This will only work when served through Vite
     const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || 'Not available (not running through Vite)';
-    const supabaseKey = import.meta.env?.VITE_SUPABASE_API_KEY || 'Not available (not running through Vite)';
+    const supabaseKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || 'Not available (not running through Vite)';
 
     document.getElementById('supabase-url').textContent = supabaseUrl;
     

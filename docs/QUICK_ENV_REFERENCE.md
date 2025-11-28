@@ -11,7 +11,7 @@ npm run dev
 | Variable | Purpose | Required |
 |----------|---------|----------|
 | `VITE_SUPABASE_URL` | Supabase project URL | Yes |
-| `VITE_SUPABASE_API_KEY` | Supabase anon key | Yes |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon key | Yes |
 
 ## Usage in Code
 

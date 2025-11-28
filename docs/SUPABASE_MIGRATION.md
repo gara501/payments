@@ -33,7 +33,7 @@ This document provides a high-level summary of the migration from SQLite WASM to
 ### Configuration Changes
 1. **Dependencies**: Remove `@sqlite.org/sqlite-wasm`, Add `@supabase/supabase-js`
 2. **Vite Config**: Remove WASM plugin and SharedArrayBuffer headers
-3. **Environment**: Already configured (VITE_SUPABASE_URL, VITE_SUPABASE_API_KEY)
+3. **Environment**: Already configured (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
 
 ### Database Schema
 ```sql
@@ -83,7 +83,7 @@ Your environment is already configured! The following variables are set in `.env
 
 ```bash
 VITE_SUPABASE_URL=https://hwwqacwadszubjqlhtse.supabase.co
-VITE_SUPABASE_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 These are loaded via `src/config/env.ts` and `src/config/supabase.ts`.

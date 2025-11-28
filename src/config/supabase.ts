@@ -37,7 +37,7 @@ export function getSupabaseUrl(): string {
 export function getSupabaseApiKey(): string {
   if (!supabaseConfig.apiKey) {
     throw new Error(
-      'Supabase API Key is not configured. Please set VITE_SUPABASE_API_KEY in your .env file.'
+      'Supabase API Key is not configured. Please set VITE_SUPABASE_ANON_KEY in your .env file.'
     );
   }
   return supabaseConfig.apiKey;

@@ -97,7 +97,7 @@ This means the table hasn't been created yet. Follow Steps 1-3 above.
 Check your `.env` file to ensure the Supabase credentials are correct:
 ```
 VITE_SUPABASE_URL=https://hwwqacwadszubjqlhtse.supabase.co
-VITE_SUPABASE_API_KEY=your-api-key-here
+VITE_SUPABASE_ANON_KEY=your-api-key-here
 ```
 
 ### Tests are slow

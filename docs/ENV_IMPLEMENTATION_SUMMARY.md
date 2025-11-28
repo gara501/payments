@@ -7,7 +7,7 @@ Successfully added comprehensive .env support to the project with proper TypeScr
 
 ### 1. Environment Files
 - **`.env`** - Local environment variables (not committed to git)
-  - Contains: `VITE_SUPABASE_URL` and `VITE_SUPABASE_API_KEY`
+  - Contains: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
   
 - **`.env.example`** - Template file for other developers
   - Shows required variables with placeholder values
@@ -64,7 +64,7 @@ Successfully added comprehensive .env support to the project with proper TypeScr
    - Value: `https://hwwqacwadszubjqlhtse.supabase.co`
    - Required: Yes
 
-2. **VITE_SUPABASE_API_KEY**
+2. **VITE_SUPABASE_ANON_KEY**
    - Purpose: Supabase anonymous/public API key
    - Required: Yes
    - Security: Safe to expose in client-side code (anon key)
@@ -96,7 +96,7 @@ if (isSupabaseConfigured()) {
 ```typescript
 // Access directly through import.meta.env
 const url = import.meta.env.VITE_SUPABASE_URL;
-const key = import.meta.env.VITE_SUPABASE_API_KEY;
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 ```
 
 ## Key Features

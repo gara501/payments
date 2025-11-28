@@ -39,7 +39,8 @@ The application currently uses SQLite WASM for client-side data storage. This mi
 
 The migration uses existing environment variables:
 - `VITE_SUPABASE_URL`: Your Supabase project URL
-- `VITE_SUPABASE_API_KEY`: Your Supabase anon/public key
+- `VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+`: Your Supabase anon/public key
 
 These are already configured in `.env` and `src/config/env.ts`.
 

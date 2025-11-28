@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This feature involves migrating the subscription management application from a client-side SQLite WASM database to Supabase, a cloud-based PostgreSQL database with real-time capabilities. The migration will enable multi-device synchronization, user authentication, and cloud-based data persistence while maintaining all existing functionality. The system will leverage the existing Supabase environment variables (VITE_SUPABASE_URL and VITE_SUPABASE_API_KEY) that are already configured.
+This feature involves migrating the subscription management application from a client-side SQLite WASM database to Supabase, a cloud-based PostgreSQL database with real-time capabilities. The migration will enable multi-device synchronization, user authentication, and cloud-based data persistence while maintaining all existing functionality. The system will leverage the existing Supabase environment variables (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) that are already configured.
 
 ## Glossary
 
@@ -21,7 +21,7 @@ This feature involves migrating the subscription management application from a c
 #### Acceptance Criteria
 
 1. WHEN the application initializes THEN the system SHALL connect to Supabase using the configured environment variables
-2. WHEN the Supabase client is created THEN the system SHALL use VITE_SUPABASE_URL and VITE_SUPABASE_API_KEY from the environment configuration
+2. WHEN the Supabase client is created THEN the system SHALL use VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY from the environment configuration
 3. WHEN environment variables are missing THEN the system SHALL display a clear error message indicating the configuration issue
 4. WHEN the database connection is established THEN the system SHALL verify the connection before allowing data operations
 5. WHEN the application starts THEN the system SHALL no longer initialize SQLite WASM

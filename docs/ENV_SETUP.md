@@ -20,7 +20,7 @@ This project uses environment variables for configuration. Vite provides built-i
   - Example: `https://your-project.supabase.co`
   - Required for database operations
 
-- `VITE_SUPABASE_API_KEY`: Your Supabase anonymous/public API key
+- `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous/public API key
   - Found in your Supabase project settings under API
   - Required for authentication and database access
 
